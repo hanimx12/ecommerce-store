@@ -82,7 +82,7 @@ export default function Products() {
                     <h3 className="font-medium text-[#1a1a2e] mt-0.5 hover:text-[#e94560] transition-colors">{product.title}</h3>
                   </Link>
                   <div className="flex items-center justify-between mt-3">
-                    <span className="font-semibold text-base sm:text-lg">${product.price.toFixed(2)}</span>
+                    <span className="font-semibold text-base sm:text-lg">{product.price.toFixed(2)} DT</span>
                     <Button
                       size="sm"
                       onClick={(e) => {

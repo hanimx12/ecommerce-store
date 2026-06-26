@@ -53,7 +53,7 @@ export default function Cart() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-[#1a1a2e] truncate">{item.title}</h3>
-                      <p className="text-sm font-semibold text-[#e94560] mt-1">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="text-sm font-semibold text-[#e94560] mt-1">{(item.price * item.quantity).toFixed(2)} DT</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -86,7 +86,7 @@ export default function Cart() {
         <div className="mt-8 p-6 rounded-2xl bg-[#1a1a2e] text-white">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-300">Subtotal</span>
-            <span className="text-2xl font-bold">${totalPrice.toFixed(2)}</span>
+            <span className="text-2xl font-bold">{totalPrice.toFixed(2)} DT</span>
           </div>
           <p className="text-xs text-gray-400 mb-6">Shipping calculated at checkout</p>
           <Link to="/checkout">

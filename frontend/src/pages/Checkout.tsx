@@ -99,7 +99,7 @@ export default function Checkout() {
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" variant="accent" size="lg" className="w-full" disabled={submitting}>
-                {submitting ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}
+                {submitting ? 'Processing...' : `Pay ${totalPrice.toFixed(2)} DT`}
               </Button>
             </form>
           </div>
@@ -111,14 +111,14 @@ export default function Checkout() {
                 {items.map(item => (
                   <div key={item.id} className="flex items-center justify-between text-sm">
                     <span className="text-gray-600 truncate max-w-[200px]">{item.title} <span className="text-gray-400">x{item.quantity}</span></span>
-                    <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-medium">{(item.price * item.quantity).toFixed(2)} DT</span>
                   </div>
                 ))}
               </div>
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-gray-500">Subtotal</span>
-                  <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                  <span className="font-medium">{totalPrice.toFixed(2)} DT</span>
                 </div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-gray-500">Shipping</span>
@@ -126,7 +126,7 @@ export default function Checkout() {
                 </div>
                 <div className="border-t border-gray-200 mt-3 pt-3 flex items-center justify-between">
                   <span className="font-semibold">Total</span>
-                  <span className="font-bold text-xl text-[#e94560]">${totalPrice.toFixed(2)}</span>
+                  <span className="font-bold text-xl text-[#e94560]">{totalPrice.toFixed(2)} DT</span>
                 </div>
               </div>
             </div>

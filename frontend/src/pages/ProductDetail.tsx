@@ -145,7 +145,7 @@ export default function ProductDetail() {
 
             {/* Price */}
             <div className="mt-6">
-              <span className="text-4xl font-bold text-[#1a1a2e]">${product.price.toFixed(2)}</span>
+              <span className="text-4xl font-bold text-[#1a1a2e]">{product.price.toFixed(2)} DT</span>
               <span className="text-sm text-gray-400 ml-2">Free shipping</span>
             </div>
 
@@ -177,7 +177,7 @@ export default function ProductDetail() {
 
             {/* Shipping info */}
             <div className="mt-6 p-4 rounded-xl bg-gray-50 text-sm text-gray-500">
-              Free shipping on orders over $50. Estimated delivery: 5-8 business days.
+              Free shipping on orders over 50 DT. Estimated delivery: 5-8 business days.
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function ProductDetail() {
                       </div>
                       <CardContent className="p-3">
                         <h3 className="font-medium text-sm truncate">{p.title}</h3>
-                        <span className="font-semibold text-sm">${p.price.toFixed(2)}</span>
+                        <span className="font-semibold text-sm">{p.price.toFixed(2)} DT</span>
                       </CardContent>
                     </Card>
                   </Link>

@@ -8,6 +8,7 @@ import { getDb, initSchema, run, queryOne } from './database';
 import productRoutes from './routes/products';
 import authRoutes from './routes/auth';
 import orderRoutes from './routes/orders';
+import categoryRoutes from './routes/categories';
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
@@ -37,6 +38,16 @@ async function start() {
     console.log(`Admin user created: ${adminUsername}`);
   }
 
+  // Seed categories on fresh database
+  const catRow = queryOne('SELECT COUNT(*) as cnt FROM categories');
+  if (!catRow || catRow.cnt === 0) {
+    const cats = ['Accessories', 'Electronics', 'Footwear', 'Clothing', 'Home'];
+    for (const name of cats) {
+      try { run('INSERT INTO categories (name) VALUES (?)', [name]); } catch {}
+    }
+    console.log(`${cats.length} categories seeded`);
+  }
+
   // Seed products on fresh database
   const row = queryOne('SELECT COUNT(*) as cnt FROM products');
   const productCount = row?.cnt ?? 0;
@@ -64,6 +75,7 @@ async function start() {
   app.use('/api/products', productRoutes);
   app.use('/api', authRoutes);
   app.use('/api/orders', orderRoutes);
+  app.use('/api/categories', categoryRoutes);
 
   // SPA catch-all: serve index.html for any non-API route
   app.get('*', (_req, res) => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Plus, LogOut, Package, ShoppingCart, TrendingUp, DollarSign } from 'lucide-react'
+import { Plus, LogOut, Package, ShoppingCart, DollarSign, Tag, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,11 +16,18 @@ interface Product {
   category: string
 }
 
+interface Category {
+  id: number
+  name: string
+}
+
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [token, setToken] = useState('')
   const [form, setForm] = useState({ title: '', description: '', price: '', image_url: '', category: '' })
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [newCategory, setNewCategory] = useState('')
   const [orderCount, setOrderCount] = useState(0)
   const [revenue, setRevenue] = useState(0)
   const navigate = useNavigate()
@@ -36,6 +43,7 @@ export default function AdminDashboard() {
     setToken(t)
     fetchProducts(t)
     fetchOrders(t)
+    fetchCategories(t)
   }, [])
 
   const fetchProducts = async (t: string) => {
@@ -48,6 +56,11 @@ export default function AdminDashboard() {
     const data = await res.json()
     setOrderCount(data.length)
     setRevenue(data.reduce((sum: number, o: any) => sum + o.total, 0))
+  }
+
+  const fetchCategories = async (_t: string) => {
+    const res = await fetch('/api/categories')
+    setCategories(await res.json())
   }
 
   const handleLogout = () => {
@@ -85,6 +98,19 @@ export default function AdminDashboard() {
     fetchProducts(token)
   }
 
+  const handleAddCategory = async () => {
+    if (!newCategory.trim()) return
+    await fetch('/api/categories', { method: 'POST', headers: getHeaders(), body: JSON.stringify({ name: newCategory.trim() }) })
+    setNewCategory('')
+    fetchCategories(token)
+  }
+
+  const handleDeleteCategory = async (id: number) => {
+    if (!confirm('Delete this category?')) return
+    await fetch(`/api/categories/${id}`, { method: 'DELETE', headers: getHeaders() })
+    fetchCategories(token)
+  }
+
   return (
     <div className="pt-24 pb-16 px-4 min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto">
@@ -107,7 +133,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-5 flex items-center gap-4">
               <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
@@ -137,7 +163,18 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-xs text-gray-400 uppercase tracking-wider">Revenue</p>
-                <p className="text-2xl font-bold text-[#1a1a2e]">${revenue.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-[#1a1a2e]">{revenue.toFixed(2)} DT</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-5 flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
+                <Tag size={20} className="text-purple-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 uppercase tracking-wider">Categories</p>
+                <p className="text-2xl font-bold text-[#1a1a2e]">{categories.length}</p>
               </div>
             </CardContent>
           </Card>
@@ -156,9 +193,18 @@ export default function AdminDashboard() {
                 <form onSubmit={handleSubmit} className="space-y-3">
                   <Input required placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
                   <Textarea placeholder="Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
-                  <Input required type="number" step="0.01" placeholder="Price" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
+                  <Input required type="number" step="0.01" placeholder="Price (DT)" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
                   <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} />
-                  <Input placeholder="Category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
+                  <select
+                    value={form.category}
+                    onChange={e => setForm({ ...form, category: e.target.value })}
+                    className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a1a2e]/20"
+                  >
+                    <option value="">Select category</option>
+                    {categories.map(c => (
+                      <option key={c.id} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
                   <div className="flex gap-2">
                     <Button type="submit" variant="default" className="flex-1">
                       {editingId ? 'Update' : 'Add Product'}
@@ -170,6 +216,38 @@ export default function AdminDashboard() {
                     )}
                   </div>
                 </form>
+              </CardContent>
+            </Card>
+
+            {/* Category Manager */}
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-sm">
+                  <Tag size={16} /> Categories
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2 mb-3">
+                  <Input
+                    placeholder="New category"
+                    value={newCategory}
+                    onChange={e => setNewCategory(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleAddCategory()}
+                  />
+                  <Button type="button" variant="default" size="sm" onClick={handleAddCategory}>
+                    <Plus size={14} />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map(c => (
+                    <span key={c.id} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-xs font-medium">
+                      {c.name}
+                      <button onClick={() => handleDeleteCategory(c.id)} className="text-gray-400 hover:text-red-500 cursor-pointer">
+                        <X size={12} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -192,7 +270,7 @@ export default function AdminDashboard() {
                       <img src={p.image_url} alt={p.title} className="w-14 h-14 rounded-lg object-cover" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{p.title}</p>
-                        <p className="text-xs text-gray-400">${p.price.toFixed(2)} · {p.category}</p>
+                        <p className="text-xs text-gray-400">{p.price.toFixed(2)} DT · {p.category}</p>
                       </div>
                       <div className="flex gap-1">
                         <Button variant="ghost" size="sm" onClick={() => handleEdit(p)}>Edit</Button>
