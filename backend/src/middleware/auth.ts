@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+const JWT_SECRET = process.env.JWT_SECRET || 'ecommerce-store-secret-key-change-in-production';
+
 export interface AuthRequest extends Request {
   admin?: { id: number; username: string };
 }
@@ -12,7 +14,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   }
   const token = header.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: number; username: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string };
     req.admin = decoded;
     next();
   } catch {
