@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1a1a2e;
+  --color-accent: #e94560;
+  --color-accent-light: #f05a75;
+  --color-surface: #16213e;
+  --color-muted: #0f3460;
+  --color-warm: #f8f4f0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #fafafa;
+  color: #1a1a2e;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Star rating */
+.star-rating {
+  display: inline-flex;
+  gap: 2px;
+}
+.star-rating .star {
+  color: #f59e0b;
+  font-size: 14px;
+}
+.star-rating .star.empty {
+  color: #d1d5db;
+}
+
+/* Product thumbnail selector */
+.thumb-active {
+  ring: 2px solid #e94560;
+}
+
+/* Uiverse.io-inspired effects */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(233, 69, 96, 0.3), 0 0 10px rgba(233, 69, 96, 0.2); }
+  50% { box-shadow: 0 0 15px rgba(233, 69, 96, 0.5), 0 0 30px rgba(233, 69, 96, 0.3); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.glow-effect {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+.uiverse-card {
+  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8));
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.uiverse-btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+.uiverse-btn-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #e94560, #f05a75, #e94560, #f05a75);
+  background-size: 400% 400%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: shimmer 3s ease infinite;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.uiverse-btn-glow:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
