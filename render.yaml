@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ecommerce-store
+    runtime: node
+    repo: https://github.com/YOUR_USERNAME/ecommerce-store
+    plan: free
+    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    startCommand: cd backend && npx tsx src/index.ts
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 24.13.0
+      - key: JWT_SECRET
+        value: ecommerce-store-secret-key-change-in-production
